@@ -1,0 +1,92 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+    
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.email == "gomezarturosantander@gmail.com";
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Validation Blueprints
+    function isValidCustomer(data) {
+      return data.keys().hasAll(['name', 'phone']) &&
+             data.name is string && data.name.size() <= 100 &&
+             data.phone is string && data.phone.size() <= 20;
+    }
+
+    function isValidProduct(data) {
+      return data.keys().hasAll(['name', 'stock']) &&
+             data.name is string && data.name.size() <= 100 &&
+             data.stock is int &&
+             (!data.keys().contains('price') || data.price is number);
+    }
+
+    function isValidOrder(data) {
+      return data.keys().hasAll(['customerId', 'status', 'type', 'orderDate']) &&
+             data.customerId is string &&
+             data.status in ['NEW', 'DESIGN', 'PRODUCTION', 'READY', 'DELIVERED'] &&
+             data.type in ['normal', 'custom'] &&
+             data.orderDate is string;
+    }
+
+    function isValidSupplier(data) {
+      return data.keys().hasAll(['name', 'phone']) &&
+             data.name is string && data.name.size() <= 100 &&
+             data.phone is string && data.phone.size() <= 20;
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Customers
+    match /customers/{customerId} {
+      allow read: if isAdmin();
+      allow create: if isAdmin() && isValidCustomer(incoming()) && isValidId(customerId);
+      allow update: if isAdmin() && isValidCustomer(incoming());
+      allow delete: if isAdmin();
+    }
+
+    // Products
+    match /products/{productId} {
+      allow read: if isAdmin();
+      allow create: if isAdmin() && isValidProduct(incoming()) && isValidId(productId);
+      allow update: if isAdmin() && isValidProduct(incoming());
+      allow delete: if isAdmin();
+    }
+
+    // Orders
+    match /orders/{orderId} {
+      allow read: if isAdmin();
+      allow create: if isAdmin() && isValidOrder(incoming()) && isValidId(orderId);
+      allow update: if isAdmin() && isValidOrder(incoming()) && (
+        incoming().diff(existing()).affectedKeys().hasAny(['status', 'lastStatusUpdate', 'notes', 'items', 'totalAmount'])
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Suppliers
+    match /suppliers/{supplierId} {
+      allow read: if isAdmin();
+      allow create: if isAdmin() && isValidSupplier(incoming()) && isValidId(supplierId);
+      allow update: if isAdmin() && isValidSupplier(incoming());
+      allow delete: if isAdmin();
+    }
+  }
+}

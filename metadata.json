@@ -1,0 +1,14 @@
+{
+  "name": "Ronin - Gestor de Tienda",
+  "description": "Sistema premium de gestión para tiendas de ropa: remeras, hoodies y personalizados.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "gestión de inventario",
+    "seguimiento de pedidos",
+    "análisis de ventas",
+    "notificaciones en tiempo real"
+  ]
+}

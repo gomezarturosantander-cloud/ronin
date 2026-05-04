@@ -1,0 +1,85 @@
+{
+  "entities": {
+    "Customer": {
+      "title": "Customer",
+      "description": "Information about customers",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "instagram": { "type": "string" },
+        "email": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "phone"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Stock items and clothing types",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "price": { "type": "number" },
+        "stock": { "type": "integer" },
+        "minStockThreshold": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "stock"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Purchase orders and production tracking",
+      "type": "object",
+      "properties": {
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "type": { "type": "string", "enum": ["normal", "custom"] },
+        "status": { "type": "string", "enum": ["NEW", "DESIGN", "PRODUCTION", "READY", "DELIVERED"] },
+        "totalAmount": { "type": "number" },
+        "orderDate": { "type": "string", "format": "date-time" },
+        "estimatedDeliveryDate": { "type": "string", "format": "date-time" },
+        "customDesignUrl": { "type": "string" },
+        "notes": { "type": "string" },
+        "items": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "lastStatusUpdate": { "type": "string", "format": "date-time" }
+      },
+      "required": ["customerId", "status", "type", "orderDate"]
+    },
+    "Supplier": {
+      "title": "Supplier",
+      "description": "Information about suppliers",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "contactName": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "category": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "phone"]
+    }
+  },
+  "firestore": {
+    "/customers": {
+      "schema": "Customer",
+      "description": "Customer list"
+    },
+    "/products": {
+      "schema": "Product",
+      "description": "Inventory items"
+    },
+    "/orders": {
+      "schema": "Order",
+      "description": "Sales and custom production orders"
+    },
+    "/suppliers": {
+      "schema": "Supplier",
+      "description": "Supplier database"
+    }
+  }
+}

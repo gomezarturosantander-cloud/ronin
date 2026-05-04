@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-ronin-bg: #0a0c10;
+  --color-ronin-card: #151921;
+  --color-ronin-gold: #c5a059;
+  --color-ronin-silver: #94a3b8;
+  --color-ronin-border: #212835;
+}
+
+@layer base {
+  body {
+    @apply font-sans antialiased text-slate-300 bg-ronin-bg;
+  }
+}
+
+@layer components {
+  .ronin-card {
+    @apply bg-ronin-card border border-ronin-border rounded-2xl shadow-lg;
+  }
+  .ronin-input {
+    @apply bg-ronin-bg border border-ronin-border text-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ronin-gold focus:border-transparent outline-hidden transition-all;
+  }
+  .ronin-btn-primary {
+    @apply bg-ronin-gold hover:opacity-80 text-ronin-bg font-bold py-3 px-6 rounded-xl transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2;
+  }
+  .ronin-btn-secondary {
+    @apply bg-ronin-border hover:bg-slate-700 text-slate-200 font-semibold py-3 px-6 rounded-xl transition-all flex items-center justify-center gap-2;
+  }
+}
